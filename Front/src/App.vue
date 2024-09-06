@@ -1,17 +1,22 @@
 <template>
-  <UserDashboard />
+  <div id="app">
+    <HeaderNavbar />
+  </div>
   <HomePage />
+  <AnimePage />
 </template>
 
 <script>
-import UserDashboard from './components/UserDashboard.vue'
 import HomePage from './components/HomePage.vue'
+import HeaderNavbar from './components/HeaderNavbar.vue'
+import AnimePage from './components/AnimePage.vue'
 
 export default {
   name: 'App',
   components: {
-    UserDashboard,
-    HomePage
+    HomePage,
+    HeaderNavbar,
+    AnimePage,
   }
 }
 </script>
@@ -23,6 +28,5 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
 </style>
