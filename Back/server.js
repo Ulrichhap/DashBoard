@@ -17,6 +17,16 @@ app.get('/', (req, res) => {
   });
 });
 
+// Endpoint pour servir les données
+app.get('/anime', (req, res) => {
+  fs.readFile('dataAnime.json', 'utf8', (err, data) => {
+    if (err) {
+      return res.status(500).send('Erreur lors de la lecture des données.');
+    }
+    res.json(JSON.parse(data));
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`Serveur backend actif sur http://localhost:${PORT}`);
 });
