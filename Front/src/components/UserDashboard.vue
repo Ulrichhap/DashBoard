@@ -21,16 +21,22 @@
         data: null,
       };
     },
+    methods: {
+      // Méthode pour obtenir les données depuis le backend
+      getData(){
+        // Requête fetch pour obtenir les données depuis le backend
+        fetch('http://localhost:3000/')
+          .then(response => response.json())
+          .then(data => {
+            this.data = data;  // Assigner les données à la variable locale
+          })
+          .catch(error => {
+            console.error('Erreur lors de la récupération des données:', error);
+          });
+      }
+    },
     mounted() {
-      // Requête fetch pour obtenir les données depuis le backend
-      fetch('http://localhost:3000/')
-        .then(response => response.json())
-        .then(data => {
-          this.data = data;  // Assigner les données à la variable locale
-        })
-        .catch(error => {
-          console.error('Erreur lors de la récupération des données:', error);
-        });
+      this.getData();  // Appeler la méthode pour obtenir les données
     },
   };
   </script>

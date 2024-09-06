@@ -1,14 +1,17 @@
 <template>
   <UserDashboard />
+  <HomePage />
 </template>
 
 <script>
 import UserDashboard from './components/UserDashboard.vue'
+import HomePage from './components/HomePage.vue'
 
 export default {
   name: 'App',
   components: {
-    UserDashboard
+    UserDashboard,
+    HomePage
   }
 }
 </script>
