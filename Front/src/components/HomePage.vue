@@ -1,9 +1,9 @@
 <template>
-  <div class="container mx-auto py-8">
+  <div :class="['container mx-auto py-8', currentModeClass]">
     <h1 class="text-3xl font-bold text-center mb-6">Projects Dashboard</h1>
 
     <!-- Indicateur de chargement -->
-    <div v-if="loading" class="text-center text-xl text-blue-500 font-semibold">
+    <div v-if="loading" class="text-center text-xl font-semibold" :class="loadingClass">
       Loading projects...
     </div>
 
@@ -31,40 +31,56 @@
 
     <!-- Liste des projets filtrés -->
     <div v-if="filteredProjects.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div v-for="project in filteredProjects" :key="project.projectName" class="p-6 bg-white shadow-lg rounded-lg flex flex-col transition duration-200 ease-in-out hover:shadow-xl min-h-[400px]">
+      <div
+        v-for="project in filteredProjects"
+        :key="project.projectName"
+        class="p-6 shadow-lg rounded-lg flex flex-col transition duration-200 ease-in-out hover:shadow-xl min-h-[400px]"
+        :class="[cardBackgroundClass]"
+      >
         <h2 class="text-2xl font-semibold mb-2">{{ project.projectName }}</h2>
-        <p class="text-gray-700 mb-2"><strong>Research Field:</strong> {{ project.researchField }}</p>
-        <p class="text-gray-700 mb-2"><strong>Institution:</strong> {{ project.leadInstitution }}</p>
-        <p class="text-gray-700 mb-4"><strong>Start Date:</strong> {{ project.startDate }} | <strong>End Date:</strong> {{ project.endDate }}</p>
+        <p class="mb-2" :class="textClass"><strong>Research Field:</strong> {{ project.researchField }}</p>
+        <p class="mb-2" :class="textClass"><strong>Institution:</strong> {{ project.leadInstitution }}</p>
+        <p class="mb-4" :class="textClass"><strong>Start Date:</strong> {{ project.startDate }} | <strong>End Date:</strong> {{ project.endDate }}</p>
 
         <!-- Détails de financement -->
-        <h3 class="text-xl font-semibold mb-2">Funding:</h3>
+        <h3 class="text-xl font-semibold mb-2" :class="textClass">Funding:</h3>
         <ul class="list-inside">
-          <li v-for="source in project.funding.sources" :key="source.name" class="text-gray-700">
-            {{ source.name }}: <span class="text-green-600 font-semibold">${{ source.amount.toLocaleString() }}</span>
+          <li
+            v-for="source in project.funding.sources"
+            :key="source.name"
+            :class="textClass"
+          >
+            {{ source.name }}: <span :class="['font-semibold', fundingAmountClass]">${{ source.amount.toLocaleString() }}</span>
           </li>
         </ul>
 
         <!-- Équipe de recherche stylisée -->
-        <h3 class="text-xl font-semibold mt-4 mb-2">Research Team:</h3>
+        <h3 class="text-xl font-semibold mt-4 mb-2" :class="textClass">Research Team:</h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div v-for="member in project.researchTeam" :key="member.name" class="bg-gray-100 p-4 rounded-lg shadow-sm hover:shadow-md transition duration-200 ease-in-out text-center min-h-[150px]">
-            <h4 class="text-lg font-semibold mb-2 text-gray-800">{{ member.name }}</h4>
-            <p class="text-blue-500 font-medium">{{ member.role }}</p>
-            <p class="text-gray-600">{{ member.specialty }}</p>
+          <div
+            v-for="member in project.researchTeam"
+            :key="member.name"
+            class="p-4 rounded-lg shadow-sm hover:shadow-md transition duration-200 ease-in-out text-center min-h-[150px]"
+            :class="[teamMemberBackgroundClass]"
+          >
+            <h4 class="text-lg font-semibold mb-2" :class="textClass">{{ member.name }}</h4>
+            <p class="font-medium" :class="textClass">{{ member.role }}</p>
+            <p :class="textClass">{{ member.specialty }}</p>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Message si aucun projet n'est trouvé -->
-    <div v-else class="text-center text-xl text-gray-500">
+    <div v-else class="text-center text-xl" :class="noProjectsClass">
       No projects found.
     </div>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
   data() {
     return {
@@ -74,6 +90,7 @@ export default {
     };
   },
   computed: {
+    ...mapGetters(['currentMode']),
     researchFields() {
       // Récupérer les domaines de recherche uniques
       return this.projects.length ? [...new Set(this.projects.map(project => project.researchField))] : [];
@@ -84,6 +101,27 @@ export default {
         return this.projects.filter(project => project.researchField === this.selectedField);
       }
       return this.projects;
+    },
+    currentModeClass() {
+      return this.currentMode === 'dark' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900';
+    },
+    loadingClass() {
+      return this.currentMode === 'dark' ? 'text-blue-400' : 'text-blue-500';
+    },
+    cardBackgroundClass() {
+      return this.currentMode === 'dark' ? 'bg-gray-800' : 'bg-white';
+    },
+    textClass() {
+      return this.currentMode === 'dark' ? 'text-gray-300' : 'text-gray-700';
+    },
+    fundingAmountClass() {
+      return this.currentMode === 'dark' ? 'text-green-400' : 'text-green-600';
+    },
+    teamMemberBackgroundClass() {
+      return this.currentMode === 'dark' ? 'bg-gray-700' : 'bg-gray-100';
+    },
+    noProjectsClass() {
+      return this.currentMode === 'dark' ? 'text-gray-400' : 'text-gray-500';
     },
   },
   methods: {
@@ -141,27 +179,5 @@ div.grid > div {
 
 div.grid .min-h-[150px] {
   min-height: 150px; /* Taille des cartes de membres de l'équipe de recherche */
-}
-
-.research-team-member {
-  background-color: #f3f4f6; /* Couleur grise douce */
-  border-radius: 0.5rem;
-  padding: 1rem;
-  text-align: center;
-}
-
-.research-team-member:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre au survol */
-  transform: translateY(-2px); /* Légère translation */
-  transition: all 0.2s ease-in-out;
-}
-
-.research-team-member h4 {
-  font-size: 1.125rem;
-  color: #111827;
-}
-
-.research-team-member p {
-  color: #6b7280; 
 }
 </style>

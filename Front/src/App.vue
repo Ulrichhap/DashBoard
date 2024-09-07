@@ -1,15 +1,18 @@
 <template>
-  <div id="app">
-    <HeaderNavbar />
+  <div :class="['app-container', currentMode]"> 
+    <div id="app">
+      <HeaderNavbar />
+    </div>
+    <HomePage />
+    <AnimePage />
   </div>
-  <HomePage />
-  <AnimePage />
 </template>
 
 <script>
 import HomePage from './components/HomePage.vue'
 import HeaderNavbar from './components/HeaderNavbar.vue'
 import AnimePage from './components/AnimePage.vue'
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'App',
@@ -17,6 +20,12 @@ export default {
     HomePage,
     HeaderNavbar,
     AnimePage,
+  },
+  computed: {
+    ...mapGetters(['currentMode']), // Récupère le mode depuis le store
+  },
+  mounted() {
+    console.log('App mounted', this.currentMode);
   }
 }
 </script>
@@ -28,5 +37,15 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+}
+.app-container.light {
+  background-color: #F3F4F6;
+  color: #000000;
+}
+
+/* Styles pour le mode sombre */
+.app-container.dark {
+  background-color: #121826;
+  color: #ffffff;
 }
 </style>

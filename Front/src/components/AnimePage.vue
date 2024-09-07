@@ -1,5 +1,5 @@
 <template>
-  <div class="p-6 min-h-screen">
+  <div :class="['p-6 min-h-screen', currentModeClass]">
     <h1 class="text-3xl font-bold text-center mb-6">Anime Dashboard</h1>
     <div class="max-w-6xl mx-auto">
       <!-- Filter Section -->
@@ -8,7 +8,8 @@
           v-model="search"
           type="text"
           placeholder="Filter by title or tag..."
-          class="p-3 border border-gray-300 rounded-md w-full lg:w-1/2 xl:w-1/3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+          class="p-3 border rounded-md w-full lg:w-1/2 xl:w-1/3 shadow-sm focus:outline-none transition"
+          :class="['border-gray-300', inputClass]"
         />
       </div>
 
@@ -18,7 +19,8 @@
           v-for="anime in filteredAnimes"
           :key="anime.title"
           @click="openAnimeDetails(anime)"
-          class="bg-white p-4 rounded-lg shadow-md flex flex-col cursor-pointer hover:shadow-lg transition-shadow"
+          class="p-4 rounded-lg shadow-md flex flex-col cursor-pointer hover:shadow-lg transition-shadow"
+          :class="[cardBackgroundClass]"
         >
           <img
             :src="anime.picture"
@@ -26,9 +28,9 @@
             class="w-full h-56 object-cover rounded-t-lg"
           />
           <div class="mt-4 flex-1">
-            <h2 class="text-xl font-semibold text-gray-800 truncate">{{ anime.title }}</h2>
-            <p class="text-gray-600 mt-1">{{ anime.type }} - {{ anime.episodes }} episodes</p>
-            <p class="text-gray-600">{{ anime.status }} - {{ anime.animeSeason.season }} {{ anime.animeSeason.year }}</p>
+            <h2 class="text-xl font-semibold truncate">{{ anime.title }}</h2>
+            <p class="mt-1">{{ anime.type }} - {{ anime.episodes }} episodes</p>
+            <p>{{ anime.status }} - {{ anime.animeSeason.season }} {{ anime.animeSeason.year }}</p>
           </div>
         </div>
       </div>
@@ -37,10 +39,11 @@
     <!-- Anime Details Modal -->
     <div
       v-if="selectedAnime"
-      class="fixed inset-0 bg-gray-800 bg-opacity-70 flex items-center justify-center"
+      class="fixed inset-0 bg-opacity-70 flex items-center justify-center"
+      :class="['bg-gray-800', modalBackgroundClass]"
       @click.self="closeAnimeDetails"
     >
-      <div class="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full relative">
+      <div class="p-6 rounded-lg shadow-lg max-w-3xl w-full relative" :class="modalClass">
         <!-- Close button -->
         <button
           @click="closeAnimeDetails"
@@ -74,7 +77,8 @@
                 <span
                   v-for="tag in selectedAnime.tags.slice(0, 10)"
                   :key="tag"
-                  class="px-3 py-1 bg-blue-200 text-blue-800 rounded-full text-sm font-medium"
+                  class="px-3 py-1 rounded-full text-sm font-medium"
+                  :class="['bg-blue-200', tagTextClass]"
                 >
                   {{ tag }}
                 </span>
@@ -90,9 +94,10 @@
               <p class="font-semibold mb-2">Synonyms:</p>
               <div class="flex flex-wrap gap-2">
                 <span
-                  v-for="synonym in selectedAnime.synonyms.slice(0, 5)"
+                  v-for="synonym in selectedAnime.synonyms.slice(0, 10)"
                   :key="synonym"
-                  class="px-3 py-1 bg-green-200 text-green-800 rounded-full text-sm font-medium"
+                  class="px-3 py-1 rounded-full text-sm font-medium"
+                  :class="['bg-green-200', synonymTextClass]"
                 >
                   {{ synonym }}
                 </span>
@@ -123,6 +128,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
   data() {
     return {
@@ -132,6 +139,7 @@ export default {
     };
   },
   computed: {
+    ...mapGetters(['currentMode']),
     filteredAnimes() {
       const searchLower = this.search.toLowerCase();
       return this.animes.filter((anime) => {
@@ -140,6 +148,27 @@ export default {
           anime.tags.some((tag) => tag.toLowerCase().includes(searchLower))
         );
       });
+    },
+    currentModeClass() {
+      return this.currentMode === 'dark' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900';
+    },
+    inputClass() {
+      return this.currentMode === 'dark' ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300 bg-white text-gray-900';
+    },
+    cardBackgroundClass() {
+      return this.currentMode === 'dark' ? 'bg-gray-800' : 'bg-white';
+    },
+    modalBackgroundClass() {
+      return this.currentMode === 'dark' ? 'bg-gray-800' : 'bg-white';
+    },
+    modalClass() {
+      return this.currentMode === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-gray-900';
+    },
+    tagTextClass() {
+      return this.currentMode === 'dark' ? 'text-blue-400' : 'text-blue-800';
+    },
+    synonymTextClass() {
+      return this.currentMode === 'dark' ? 'text-green-400' : 'text-green-800';
     },
   },
   methods: {
