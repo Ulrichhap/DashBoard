@@ -3,23 +3,29 @@
     <div id="app">
       <HeaderNavbar />
     </div>
-    <HomePage />
+    <ProjectPage />
     <AnimePage />
+    <HospitalPage />
+    <MedicationPage />
   </div>
 </template>
 
 <script>
-import HomePage from './components/HomePage.vue'
+import ProjectPage from './components/ProjectPage.vue'
 import HeaderNavbar from './components/HeaderNavbar.vue'
 import AnimePage from './components/AnimePage.vue'
+import HospitalPage from './components/HospitalPage.vue'
+import MedicationPage from './components/MedicationPage.vue'
 import { mapGetters } from 'vuex';
 
 export default {
   name: 'App',
   components: {
-    HomePage,
+    ProjectPage,
     HeaderNavbar,
     AnimePage,
+    HospitalPage,
+    MedicationPage
   },
   computed: {
     ...mapGetters(['currentMode']), // Récupère le mode depuis le store
